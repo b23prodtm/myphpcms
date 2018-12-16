@@ -1,7 +1,9 @@
 <?php
-if ($p) {
-        include $GLOBALS['etc'] . DS . $p;
+if ($p && isset($r)) {
+        require APP . $r->r['etc'] . DS . $p;
+} else if (isset($r)){
+        require APP . $r->r['etc__index'];
 } else {
-        include $GLOBALS['etc__index'];
+  // code...
 }
 ?>

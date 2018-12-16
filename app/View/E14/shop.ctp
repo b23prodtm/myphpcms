@@ -1,7 +1,7 @@
 <?php
 
 if (stristr($p, ".php")) {
-        include $GLOBALS["shop"] . DS . $p;
+        include APP . $r->r["shop"] . DS . $p;
 } else {
-        include $GLOBALS["shop__index"];
+        include APP . $r->r["shop__index"];
 }

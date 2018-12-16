@@ -1,13 +1,6 @@
 <?php
-
-$r = new Index($this);
-require_once $GLOBALS['include__php_page.class.inc'];
-require_once $GLOBALS['include__php_info.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
-require_once $GLOBALS['include__php_constantes.inc'];
-
 $contenu = $r->lang("contents", "infos");
-
+require APP . $r->r["include__php_constantes.inc"];
 // info SQL
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 if ($sql->connect_succes()) {
@@ -17,7 +10,7 @@ if ($sql->connect_succes()) {
         $catSelect = "";
         /* pagination /np/count/ */
         $count = isset($count) ? $count : 10;
-        $np = isset($np) ? $np : 1;
+        $np = isset($offset) ? $offset : 1;
         /** les parametres $this->set('d') $this->set('cat') */
         if (isset($d)) {
                 $dateSelect .= " AND published = '" . $d . "' ";
@@ -60,5 +53,5 @@ if ($sql->connect_succes()) {
         }
         $sql->close();
 } else {
-        trigger_error("Err code : " . ERROR_DB_CONNECT, E_USER_ERROR);
+        throw new Exception("ERROR : template " . basename(__FILE__) . " couldn't connect with err_code:" . ERROR_DB_CONNECT);
 }

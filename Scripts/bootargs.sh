@@ -7,9 +7,13 @@ red="\033[0;31m"
 green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
-export DATABASE_ENGINE="Mysql"
-export DATABASE_SERVICE_NAME="mysql"
+#; To change  Model/Datasource/Database
+[[ ("${DB}" == "Mysql") || -z $DB ]] && export DB="Mysql" && export DATABASE_ENGINE="MysqlCms" && export DATABASE_SERVICE_NAME="MYSQL"
+[ "${DB}" == "Pgsql" ] && export DATABASE_ENGINE="PostgresCms" && export DATABASE_SERVICE_NAME="PGSQL"
+[ "${DB}" == "Sqlite" ] && export DATABASE_ENGINE="SqliteCms" && export DATABASE_SERVICE_NAME="SQLITE"
+echo -e "DB : ${green}${DB}${nc}"
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
+export PGSQL_SERVICE_HOST="localhost"
 #;export MYSQL_SERVICE_HOST="127.0.0.1"
 export MYSQL_SERVICE_HOST="localhost"
 export MYSQL_SERVICE_PORT="3306"
@@ -19,6 +23,7 @@ export DATABASE_USER="root"
 #; To override, shell parameter -p=<password> instead
 #;export DATABASE_PASSWORD=""
 #. Test configuration ?test=1, ./test_cake.sh
+export TEST_PGSQL_SERVICE_HOST="localhost"
 #;export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
 export TEST_MYSQL_SERVICE_HOST="localhost"
 export TEST_MYSQL_SERVICE_PORT="3306"

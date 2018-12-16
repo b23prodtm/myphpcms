@@ -24,10 +24,10 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
-        shift
         args=""
-        if [ $openshift > /dev/null ]; then args="--openshift"; fi
-        shell_prompt "./migrate-database.sh ${args} $*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        shift
+        if [ $openshift > /dev/null ]; then args="--openshift "; fi
+        shell_prompt "./migrate-database.sh ${args}$*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         break;;
     -[sS]*|-[pP]*|-[fF]*)
         #; void source script known args
@@ -47,12 +47,13 @@ while [[ "$#" > 0 ]]; do case $1 in
               -d, --mig-database [options]
                   Migrate Database (see ./migrate-database.sh --help)"
               exit 0;;
-    -[oO]*|--openshift );;
+    -[oO]*|--openshift )
+      show_password_status $DATABASE_USER $DATABASE_PASSWORD "is configuring openshift...";;
     -[vV]*|--verbose )
       echo "Passed params :  $0 ${saved}";;
     *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
+echo -e "${green}Fixing some file permissions...${nc}"
+[ $openshift > /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
 #; update plugins and dependencies
 source ./Scripts/composer.sh "-o"
-echo -e "${green}Fixing some file permissions...${nc}"
-source ./Scripts/configure_tmp.sh

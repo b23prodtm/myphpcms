@@ -1,97 +1,90 @@
 cache:
   directories:
-    - app/tmp/cache
-    - .autoconf
-    - $HOME/.composer/cache/files
+  - app/tmp/cache
+  - ".autoconf"
+  - "$HOME/.composer/cache/files"
 env:
   matrix:
-    - DB=Mysql
+  - DB=Mysql
   global:
-    - PHPUNIT=4
-    - PHPCS=3
-    - COLLECT_COVERAGE=false
-    - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
-    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-    #   via the "travis encrypt" command using the project repo's public key
-    - secure: "C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8="
-
+  - PHPUNIT=4
+  - PHPCS=3
+  - COLLECT_COVERAGE=false
+  - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
+  - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
 addons:
   coverity_scan:
     project:
-      name: "b23prodtm/myphpcms"
-      description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database. Developer Note : This is the Cake PHP cartridge repository. A submodule is included in app/webroot."
+      name: b23prodtm/myphpcms
+      description: 'This PHP CMS is featuring well-known functionalities as cool as
+        posting some web contents with pictures stored in a database. Developer Note
+        : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
-    build_command: ./test-cake.sh --cov | grep Test
+    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database"
+      "-y" && .travis/configure.sh
+    build_command: "./test-cake.sh --cov | grep Test"
     branch_pattern: coverity_scan
 services:
-  - memcached
-
+- memcached
 language: generic
-
 matrix:
   fast_finish: true
-
   include:
-    - os: linux
-      php: 5.6
-      env: DB=Pgsql
-
-    - os: linux
-      php: 5.6
-      env: DB=Sqlite
-
-    - os: linux
-      php: 5.6
-
-    - os: linux
-      php: 7.0
-
-    - os: linux
-      php: 'nightly'
-
-    - os: linux
-      php: 'hhvm'
-
-    - os: osx
-      env: _PHP=php@5.6
-
-    - os: osx
-      env: _PHP=php@7.0
-
-    - os: osx
-      env: _PHP=php@7.1
-
+  - os: linux
+    php: 5.6
+    env: DB=Pgsql
+  - os: linux
+    php: 5.6
+    env: DB=Sqlite
+  - os: linux
+    php: 5.6
+  - os: linux
+    php: 7.0
+  - os: linux
+    php: nightly
+  - os: linux
+    php: hhvm
+  - os: osx
+    env: _PHP=php@5.6
+  - os: osx
+    env: _PHP=php@7.0
+  - os: osx
+    env: _PHP=php@7.1
   allow_failures:
-    - php: 'nightly'
-    - php: 'hhvm'
-    - os: osx
-
+  - php: nightly
+  - php: hhvm
+  - os: osx
 before_install:
-  - if [ "${COLLECT_COVERAGE}" != "true" ]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
-  # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - ./Scripts/configure_tmp.sh
-
+- if [ "${COLLECT_COVERAGE}" != "true" ]; then phpenv config-rm xdebug.ini || true
+  ; fi
+- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
+  ; fi
+- echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN
+  CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+- "./Scripts/configure_tmp.sh"
 install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
-
-# Local Test (osx configuration and mysql engine) :
-# $ ./test-cake.sh --travis
+- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh
+  "${_PHP}" ; fi
 before_script:
-  # remote servers CI doesn't need a root password import (-i) but the socket => -y
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
-
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass"
+  "-s" "word" "--mig-database" "-y"; fi
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
 script:
-  # tests with phpunit
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh | grep Test; fi
-
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh | grep Test; fi
 after_script:
-  - if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
-
+- if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
+  then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
 after_success:
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - ./send.sh success $WEBHOOK_URL
+- wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+- chmod +x send.sh
+- "./send.sh success $WEBHOOK_URL"
+- zip -r myphpcms.zip *
+- git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
+deploy:
+  provider: releases
+  api_key:
+    secure: UmXoq0sFQQixpMH12MG1Q3+pQhw05SuN919FgnKCru3X3RTCpXnZB8hgXvQHZn5Hhunq5eBPZ7C/bvk5wkzPXrwpAXyA7wj7PhGn6QbksU6xtkNOQVera/pMoTJW2VtNA2GcWvUvCnht3m73Tp2lguaI3Q6Yt8qq1vHJlDO5hbgvC0LdDrRFLIAA95jA9DWZRCWanHV5aepVNkX0qjQm25BIAwvQtfxkj/DipDYy2eIMh8brh6aZamE3cBv8sXP8b2b89GB670E35Otfseu58a6HxqmLD4dI5kIEzhSFjuelPJne0tmebFKww+mPn7v2SKJZR9xVfQM+mZHAp7SiozEvi1nqhUN31Z64mpDQDPnAB6eO36rGSdxDyYN7Ab24lJuLTcNkRbNOaJzn88q9d5DqGGQRJl6875cJmPFOjUwNteJIvLhDmPX3oHSPvWx3AtpEUtWeCrVt1yc7tyG0kdW8MmzoWvgDhbyvqAefKO3bEzVZeQQy/7LKy1i42+B/7N57oR6sgFX2N/zvdckFKjwHNiydds67Wj++EuJRXr2AhxdraW3iwDBTmkrZ3TjOsxcySbMBJHCOwHF9yAmLklbk4h1haCohkQrQxBp6Rhm3vKJGDOR3rOkjqIzqgHgo3pcXDdBULMpfB3/IbDeh3/RMuTEOXvv7FUNRjb4JIdI=
+  file: myphpcms.zip
+  on:
+    repo: b23prodtm/myphpcms
+    branch: feature/gh-releases

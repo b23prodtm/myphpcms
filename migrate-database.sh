@@ -35,22 +35,10 @@ while [[ "$#" > 0 ]]; do case $1 in
       shift;shift;;
   -[vV]*|--verbose )
     [ -f $identities ] && cat $identities
-    echo -e "
-    ${red}
-            ///// MySQL HOWTO: connect to the database${nc}
-            A MySQL server (must match remote server version)
-            must be reachable locally. If it's the 1st time you use this connection,
-
-            Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
-
-            See common issues in README.md file.
-
-            This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
-
-            These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
-    "
     # Reset passed args (shift reset)
-    echo "Passed params : $0 ${saved}";;
+    echo "Passed params : $0 ${saved}
+    and environment VARIABLES:"
+    export -p | grep "DATABASE\|MYSQL";;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
         -u
@@ -91,8 +79,8 @@ while [[ "$#" > 0 ]]; do case $1 in
   esac
 shift; done
 #; import identities
-[ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
-[ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
+[ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] && [ ! -z $MYSQL_SERVICE_PORT ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
+[ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] && [ ! -z $TEST_MYSQL_SERVICE_PORT ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
 if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
 # configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
@@ -125,6 +113,7 @@ if [[ $import_identities -eq 1 ]]; then
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi
 if [[ $update_checked -eq 1 ]]; then
+  show_password_status "$DATABASE_USER" "$DATABASE_PASSWORD" "is updating cake schemas"
   #; update plugins and dependencies
   source ./Scripts/composer.sh "-o"
   #; cakephp shell

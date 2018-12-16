@@ -1,15 +1,8 @@
 <?php
-
-if (!$i_sitemap) {
-        require_once '../include/php_index.inc.php';
-}
-$r = new Index($this);
-require_once $GLOBALS['include__php_page.class.inc'];
-require_once $GLOBALS['include__php_formulaire.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
-require_once $GLOBALS['include__php_constantes.inc'];
-require_once $GLOBALS['include__php_module_html.inc'];
-require_once $GLOBALS['include__php_module_cat.inc'];
+App::uses(array('SQL', 'Page', 'Formulaire'), 'Cms');
+require APP . $r->r['include__php_constantes.inc'];
+require APP . $r->r['include__php_module_html.inc'];
+require APP . $r->r['include__php_module_cat.inc'];
 
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 

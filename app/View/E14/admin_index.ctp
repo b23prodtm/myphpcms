@@ -1,8 +1,4 @@
 <?php
-if (!$i_sitemap) {
-        require '../include/php_index.inc.php';
-}
-$r = new Index();
 if ($pIndex === "admin__log_off") :
         ?>
         <p>&nbsp;</p>
@@ -13,7 +9,7 @@ if ($pIndex === "admin__log_off") :
         <div align="center"><font face="Verdana, Arial, Helvetica, sans-serif"><b><?php echo $r->lang("logoff", "admin"); ?></b></font></div>
         <?php
         session_destroy();
-        header('Refresh: 2; url=' . $i_sitemap["e13__index"]);
+        header('Refresh: 2; url=' . $r->sitemap["e13__index"]);
         exit;
 else :
         ?><?php
@@ -24,4 +20,3 @@ else :
         echo $this->get('i_menu');
 endif;
 ?>
-

@@ -7,5 +7,11 @@ class PostgresCms extends Postgres
 		parent::__construct($config, $autoConnect);
 		$this->columns['mediumbinary'] = array('name' => 'bytea');
 	}
+	public function connect() {
+		if (Configure::read('debug') > 1) {
+			var_dump($this->config);
+		}
+		parent::connect();
+	}
 }
 ?>

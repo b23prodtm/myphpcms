@@ -1,5 +1,6 @@
 #!/bin/bash
 source ./Scripts/lib/parsing.sh
+source ./Scripts/lib/shell_prompt.sh
 command="server -p 8080"
 saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
@@ -10,8 +11,9 @@ while [[ "$#" > 0 ]]; do case $1 in
             Exports DATABASE_PASSWORD to bootargs.
         -t,--test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
-        -c <command> <options>
+        -c <command> <options> [--help]
             lib/Cake/Console/cake <command> <options>
+            E.g. $0 -c server --help
         "
         exit 0;;
   -[pP]*|--sql-password*)
@@ -24,6 +26,7 @@ while [[ "$#" > 0 ]]; do case $1 in
   *);;
 esac; shift; done
 source ./Scripts/bootstrap.sh $saved
+show_password_status "$DATABASE_USER" "$DATABASE_PASSWORD" "is running development server"
 url="http://localhost:8080"
 echo -e "Welcome homepage ${cyan}${url}${nc}"
 echo -e "Administrator login ${cyan}${url}/admin/index${nc}"

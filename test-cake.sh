@@ -44,6 +44,7 @@ while [[ "$#" > 0 ]]; do case $1 in
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
 source ./Scripts/bootstrap.sh $bootargs
+show_password_status "$TEST_DATABASE_USER" "$TEST_DATABASE_PASSWORD" "is running tests"
 if [[ "$COLLECT_COVERAGE" == "true" ]]; then
   ./app/Vendor/bin/phpunit --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
 else

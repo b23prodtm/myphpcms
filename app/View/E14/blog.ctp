@@ -1,7 +1,9 @@
 <?php
 
-if (stristr($p, ".php")) {
-        include $GLOBALS["blog"] . DS . $p;
+if (stristr($p, ".php") && isset($r)) {
+        include APP . $r->r["blog"] . DS . $p;
+} else if(isset($r)){
+        include APP . $r->r["blog__index"];
 } else {
-        include $GLOBALS["blog__index"];
+  // code...
 }

@@ -17,14 +17,14 @@ Required VARIABLES  in .travis.yml or Pod environment
   TEST_DATABASE_PASSWORD: <user-password>
   if [ DB='Mysql' ]; then
     TEST_MYSQL_SERVICE_HOST: <mysql-host>
-  else if [ DB='pgsql' ]; then
+  else if [ DB='Postgres' ]; then
     TEST_POSTGRES_SERVICE_HOST: <postgres-host>
   fi
 optional environment VARIABLES in .travis.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
-[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_POSTGRES_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
+[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_PGSQL_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
 php bin/composer.phar install --no-interaction
 if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
@@ -64,7 +64,7 @@ echo "<?php
     ),
     'Pgsql' => array(
       'datasource' => 'Database/PostgresCms',
-      'host' => '${TEST_POSTGRES_SERVICE_HOST}',
+      'host' => '${TEST_PGSQL_SERVICE_HOST}',
       'login' => '${TEST_DATABASE_USER}',
       'database' => 'cakephp_test',
       'schema' => array(

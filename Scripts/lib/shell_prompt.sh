@@ -30,3 +30,8 @@ shell_prompt() {
   done
 }
 #; export -f shell_prompt
+show_password_status() {
+  [ "$#" -lt 3 ] && echo "Usage: $0 '<VAR_USER>' '<VAR_PASSWORD>' <action-description>"
+  echo -e "User ${green}${1}${nc} (using password:${orange} $([ -z $2 ] && echo 'NO' || echo 'YES')${nc}) $3...\n"
+}
+#; export -f show_password_status

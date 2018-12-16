@@ -63,65 +63,47 @@
  *
  * flags =>
  * A key/value array of driver specific connection options.
- */
+ *
+ * Edit ./Scripts/bootargs.sh !
+ * For Test settings in test-cake.sh  */
+
 class DATABASE_CONFIG {
 
         public $default = array(
-        # this is an extended Mysql database (providing blob-binary storage)
+        /* this is an extended Mysql database (providing blob-binary storage)*/
             'datasource' => 'Database/MysqlCms',
             'persistent' => false,
-            //'host' => 'localhost',
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'login' => 'root',
-            'password' => '',
-            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
         public $test = array(
             'datasource' => 'Database/MysqlCms',
             'persistent' => false,
-            //'host' => 'localhost',
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'login' => 'test',
-            'password' => '',
-            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
 
         public function __construct() {
-                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) . '_cms' : FALSE;
-                /** a different test/local configuration (shall not be the same as production)*/
-                $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $test['login'] = getenv('TEST_DATABASE_USER');
-                $test['password'] = getenv('TEST_DATABASE_PASSWORD');
-                $test['database'] = getenv('TEST_DATABASE_NAME');
-                $test['datasource'] = $datasource;
-                $this->test = $test;
+                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
+                $test = array(
+                  'host' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
+                  'port' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
+                  'login' => getenv('TEST_DATABASE_USER'),
+                  'password' => getenv('TEST_DATABASE_PASSWORD'),
+                  'database' => getenv('TEST_DATABASE_NAME'),
+                  'datasource' => $datasource ? $this->test['datasource'] : $datasource
+                );
+                $default = array(
+                  'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
+                  'login' => getenv("DATABASE_USER"),
+                  'password' => getenv("DATABASE_PASSWORD"),
+                  'database' => getenv("DATABASE_NAME"),
+                  'datasource' => $datasource ? $this->default['datasource'] : $datasource
+                );
 
-                $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $default['login'] = getenv("DATABASE_USER");
-                $default['password'] = getenv("DATABASE_PASSWORD");
-                $default['database'] = getenv("DATABASE_NAME");
-                $default['datasource'] = $datasource;
-                $this->default = $default;
-
-                /* copy default to test if necessary */
-                $this->redirectIfNull($test, $this->default);
-                /* copy member variables if null detected */
-                $this->redirectIfNull($test, $this->test);
-                $this->redirectIfNull($default, $this->default);
-        }
-        function redirectIfNull(&$default, $redirect) {
-                foreach ($default as $key => $val) {
-                        if ((!$val || $val === "") && ($redirect[$key] || $redirect[$key] !== "")) {
-                                $default[$key] = $redirect[$key];
-                        }
-                }
+                /* override member variables */
+                $this->test = array_merge($this->test, $test);
+                $this->default = array_merge($this->default, $default);
         }
 }
