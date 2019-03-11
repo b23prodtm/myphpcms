@@ -1,6 +1,6 @@
 #!/bin/bash
 sqlversion="5.7"
-if [ ! $(which brew) > /dev/null ]; then echo "Missing homebrew... aborted mysql check."; else if [ ! $(which mysql) > /dev/null ]; then
+if [ ! $(which brew) 2> /dev/null ]; then echo "Missing homebrew... aborted mysql check."; else if [ ! $(which mysql) 2> /dev/null ]; then
 	echo -e "Missing MySQL ${sqlversion} database service."
 	brew outdated mysql@${sqlversion} | brew upgrade
 	echo -e "Installing with Homebrew..."

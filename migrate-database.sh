@@ -3,7 +3,7 @@ set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
+if [ $openshift 2> /dev/null ]; then
   echo "Real environment bootargs..."
 else
   echo "Provided local/test bootargs..."
@@ -18,7 +18,10 @@ identities=app/Config/database.sql
 new_pass=""
 new_test_pass=""
 saved=("$*")
+sql_source=""
 while [[ "$#" > 0 ]]; do case $1 in
+  --docker )
+      sql_source="docker exec mysql ";;
   -[uU]* )
       update_checked=1
       ;;
@@ -91,24 +94,26 @@ if [[ $import_identities -eq 1 ]]; then
   parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
   echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
   parse_sql_password "$new_test_pass" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
+  #; $identities file contents
   echo -e "# WARNING: You will alter SQL users access rights\r
-  create database if not exists ${DATABASE_NAME};\r
-  use mysql;\r
-  create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
   # set_DATABASE_PASSWORD
   alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
+
+  use mysql;\r
   select * from user where user = '${DATABASE_USER}';\r
   grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+  create database if not exists ${DATABASE_NAME};\r
 
-  create database if not exists ${TEST_DATABASE_NAME};\r
-  use mysql;\r
   create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
   # set_TEST_DATABASE_PASSWORD
   alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
+
+  use mysql;\r
   select * from user where user = '${TEST_DATABASE_USER}';\r
   grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+  create database if not exists ${TEST_DATABASE_NAME};\r
   " > $identities
-  echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
+  ${sql_source} sh -c "echo \"source ${identities}\" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD  --connect-expired-password"
   export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi

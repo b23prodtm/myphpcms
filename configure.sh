@@ -3,7 +3,7 @@ set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
+if [ $openshift 2> /dev/null ]; then
   echo "Real environment bootargs..."
 else
   echo "Provided local/test bootargs..."
@@ -26,7 +26,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         args=""
         shift
-        if [ $openshift > /dev/null ]; then args="--openshift "; fi
+        if [ $openshift 2> /dev/null ]; then args="--openshift "; fi
         shell_prompt "./migrate-database.sh ${args}$*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         break;;
     -[sS]*|-[pP]*|-[fF]*)
@@ -54,6 +54,6 @@ while [[ "$#" > 0 ]]; do case $1 in
     *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
 echo -e "${green}Fixing some file permissions...${nc}"
-[ $openshift > /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
+[ $openshift 2> /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
 #; update plugins and dependencies
-source ./Scripts/composer.sh "-o"
+source ./Scripts/composer.sh "--dev --no-interaction"

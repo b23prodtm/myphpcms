@@ -3,18 +3,15 @@ set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
+if [ -z ${PHP_CMS_DIR} ]; then export PHP_CMS_DIR=app/webroot/php_cms; fi
+if [ $openshift 2> /dev/null ]; then
   echo "Real environment bootargs..."
+  export CAKEPHP_DEBUG_LEVEL=1
 else
   echo "Provided local/test bootargs..."
+  export CAKEPHP_DEBUG_LEVEL=2
   source ./Scripts/bootargs.sh $*
 fi
-#;
-#;
-#; this development phase, don't use the same values for production (no setting means no debugger)!
-#;
-#;
-export CAKEPHP_DEBUG_LEVEL=2
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
@@ -30,17 +27,16 @@ if [[ ! $GET_HASH_PASSWORD ]]; then
   fi
   source $hash
 fi
-echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
+echo -e "${nc}Password ${green}${GET_HASH_PASSWORD}${nc}"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
-phpunit="./app/Vendor/bin/phpunit"
-if [ ! -f $phpunit ]; then
-        if [ ! -f bin/composer.phar ]; then
-                source ./Scripts/composer.sh
-        fi
-        php bin/composer.phar update --prefer-dist --with-dependencies phpunit/phpunit cakephp/cakephp-codesniffer
-else
-        echo -e "PHPUnit ${green}[OK]${nc}"
+if [ $openshift 2> /dev/null ]; then
+	phpunit="./app/Vendor/bin/phpunit"
+	if [ ! -f $phpunit ]; then
+                source ./Scripts/composer.sh -o phpunit/phpunit cakephp/cakephp-codesniffer
+	else
+	        echo -e "PHPUnit ${green}[OK]${nc}"
+	fi
+	echo `$phpunit --version`
 fi
-echo `$phpunit --version`
 source ./Scripts/config_app_database.sh

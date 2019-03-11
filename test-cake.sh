@@ -2,6 +2,9 @@
 source ./Scripts/lib/parsing.sh
 bootargs=""
 saved=("$*")
+config_args="-c -h -p pass -s word --mig-database -y"
+config_work_dir=""
+notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password into resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
 while [[ "$#" > 0 ]]; do case $1 in
   --travis )
     #; Test values
@@ -10,12 +13,14 @@ while [[ "$#" > 0 ]]; do case $1 in
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
     )
-    # remote servers CI don't need (-i) identities but the socket: use configure.sh --mig-database --openshift
-    notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password into resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
-    echo -e $notice
-    source ./configure.sh "--mig-database" "-p" "-t" "-i" "-p=proot" "-t=ptest"
-    echo -e $notice
-    source .travis/configure.sh;;
+    config_args="${config_args}"
+    config_work_dir=".travis";;
+  --docker )
+    #; Test values
+    export DB="Mysql"
+    export COLLECT_COVERAGE="false"
+    config_args="${config_args}"
+    config_work_dir="docker";;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
@@ -26,6 +31,8 @@ while [[ "$#" > 0 ]]; do case $1 in
           Exports TEST_DATABASE_PASSWORD
       --travis
           Travis CI Local Test Workflow
+      --docker
+          Docker Local Test Workflow
       --cov
           Coverage All Tests
       -o, --openshift
@@ -37,12 +44,15 @@ while [[ "$#" > 0 ]]; do case $1 in
   -[tT]*|--test-sql-password*)
     parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "test user ${TEST_DATABASE_USER}";;
   -[vV]*|--verbose )
-    echo "Passed params :  $0 ${saved}"
-    bootargs="${bootargs} $1";;
+    echo "Passed params :  $0 ${saved}";;
   -[oO]*|--openshift )
-    bootargs="${bootargs} $1";;
+    bootargs="${saved}";;
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
+echo -e $notice
+source ./configure.sh "${config_args}"
+echo -e $notice
+[ ! -z $config_work_dir ] && source "${config_work_dir}/configure.sh"
 source ./Scripts/bootstrap.sh $bootargs
 show_password_status "$TEST_DATABASE_USER" "$TEST_DATABASE_PASSWORD" "is running tests"
 if [[ "$COLLECT_COVERAGE" == "true" ]]; then

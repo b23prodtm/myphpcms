@@ -7,6 +7,7 @@ red="\033[0;31m"
 green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
+echo -e "Loading ${orange}Test environment${nc} : $0..."
 #; To change  Model/Datasource/Database
 [[ ("${DB}" == "Mysql") || -z $DB ]] && export DB="Mysql" && export DATABASE_ENGINE="MysqlCms" && export DATABASE_SERVICE_NAME="MYSQL"
 [ "${DB}" == "Pgsql" ] && export DATABASE_ENGINE="PostgresCms" && export DATABASE_SERVICE_NAME="PGSQL"
@@ -35,7 +36,6 @@ export TEST_DATABASE_USER="test"
 export FTP_SERVICE_HOST="localhost"
 export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
-export PHP_CMS_DIR="./app/webroot/php_cms/"
 #; More about default environment app/Config/core.php
 #; Openshift Online secure keys (default_keys)
 export CAKEPHP_SECURITY_SALT="Word"

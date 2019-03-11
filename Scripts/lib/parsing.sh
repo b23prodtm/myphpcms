@@ -34,7 +34,7 @@ Please, enter the $4 value now:
 }
 #; export -f parse_arg_export
 parse_arg_exists() {
-  [ $# -eq 0 ] && echo "Usage: $0 <argument-case> arguments-list"
+  [ $# -lt 2 ] && echo "Usage: $0 <argument-case> list-or-\$*"
   arg1=$(echo $1 | cut -f 1 -d '|')
   arg2=$(echo $1 | cut -f 2 -d '|')
   shift
@@ -45,3 +45,8 @@ parse_arg_exists() {
   esac; ((count++)); shift; done
 }
 #; export -f parse_arg_exists()
+parse_dns_host() {
+  [ $# -lt 3 ] && echo "Usage: $0 <passed-argument> <export-var> <description>"
+  parse_arg_export $1 "-dns*|-DNS*" $2 $3
+}
+#; export -f parse_dns_host()
